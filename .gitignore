@@ -1,0 +1,8 @@
+node_modules
+dist
+
+# MacOS specific ignores
+.DS_Store
+
+# VSCode specific ignores
+.vscode
