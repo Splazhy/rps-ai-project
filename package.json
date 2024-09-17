@@ -26,6 +26,7 @@
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "solid-icons": "^1.1.0",
-    "solid-js": "^1.8.11"
+    "solid-js": "^1.8.11",
+    "solid-webcam": "^1.0.4"
   }
 }

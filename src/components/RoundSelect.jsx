@@ -1,15 +1,22 @@
-import { createSignal } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
 
 export default function RoundSelect() {
   const [selectedRadio, setSelectedRadio] = createSignal(3);
   const [numberValue, setNumberValue] = createSignal("");
-  const uncheckRadio = () => {
-    setSelectedRadio(-1);
-  }
+
   const changeRadio = (num) => {
     setSelectedRadio(num);
     setNumberValue("");
   }
+
+  createEffect(() => {
+    if (numberValue() !== '') {
+      setSelectedRadio(-1);
+    } else {
+      setSelectedRadio(3);
+    }
+  });
+
   return (
     <div class='flex font-mono p-8 rounded-3xl border border-slate-800'>
       <div>
@@ -46,7 +53,7 @@ export default function RoundSelect() {
       <div class="divider divider-horizontal"></div>
       <div class='flex flex-col'>
         First to:
-        <input type="number" name="first-to" onclick={uncheckRadio} value={numberValue()} oninput={(e) => setNumberValue(e.target.value)} class="textarea textarea-bordered rounded-xl text-base w-24" />
+        <input type="number" name="first-to" value={numberValue()} oninput={(e) => setNumberValue(e.target.value)} class="textarea textarea-bordered rounded-xl text-base w-24" />
       </div>
     </div>
   );

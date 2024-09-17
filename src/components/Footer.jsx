@@ -16,7 +16,7 @@ export default function Footer() {
         <p>
           โปรเจกต์วิชา 05506210 ARTIFICIAL INTELLIGENCE ของ&nbsp;
           <span class="tooltip before:whitespace-pre-wrap before:content-[attr(data-tip)]" data-tip={groupMembers}>
-            <span class='text-orange-500 underline font-bold'>กลุ่ม ReLU</span>
+            <span class='text-indigo-500 underline font-bold'>กลุ่ม ReLU</span>
           </span>
           &nbsp;ปีการศึกษา 2567
         </p>

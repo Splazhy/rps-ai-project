@@ -7,6 +7,9 @@ const Ai = lazy(() => import('./pages/Ai'));
 const Home = lazy(() => import('./pages/Home'));
 const Host = lazy(() => import('./pages/Host'));
 const Join = lazy(() => import('./pages/Join'));
+const PlayAi = lazy(() => import('./pages/PlayAi'));
+const PlayHuman = lazy(() => import('./pages/PlayHuman'));
+const PageNotFound = lazy(() => import('./pages/PageNotFound'));
 
 const root = document.getElementById('root');
 
@@ -29,5 +32,8 @@ render(() => (
     <Route path="/ai" component={Ai} />
     <Route path="/host" component={Host} />
     <Route path="/join" component={Join} />
+    <Route path="/play_ai" component={PlayAi} />
+    <Route path="/play_human" component={PlayHuman} />
+    <Route path="/*" component={PageNotFound} />
   </Router>
 ), root);

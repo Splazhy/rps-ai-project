@@ -3,6 +3,7 @@ import Footer from "../components/Footer";
 import RoundSelect from "../components/RoundSelect";
 import KickButton from "../components/KickButton";
 import { createEffect, createSignal } from "solid-js";
+import CameraPlaceholder from "../components/CameraPlaceholder";
 
 export default function Host() {
   const [joinedPlayers, setJoinedPlayers] = createSignal(2);
@@ -16,6 +17,8 @@ export default function Host() {
   return (
     <div class='min-h-screen flex flex-col overflow-hidden'>
       <div class='flex flex-wrap basis-0 grow gap-8 justify-center items-center py-8'>
+
+        <CameraPlaceholder/>
 
         <div class='min-w-fit'>
           <h1 class='text-center text-2xl font-mono'>Players (2/2)</h1>
@@ -46,7 +49,8 @@ export default function Host() {
           <RoundSelect />
           <div class='flex items-center gap-2 my-4'>
             <HomeButton />
-            <input type='submit' disabled={!isReady()} class={'btn btn-wide btn-secondary font-mono text-base' + (isReady() ? '' : ' btn-disabled')} value={isReady() ? 'Start' : 'Waiting for players'}></input>
+            {/* <input type='submit' disabled={!isReady()} class={'btn btn-wide btn-secondary font-mono text-base' + (isReady() ? '' : ' btn-disabled')} value={isReady() ? 'Start' : 'Waiting for players'}></input> */}
+            <a href='/play_human' class='btn btn-wide btn-secondary font-mono text-base'>Start</a>
           </div>
         </form>
 

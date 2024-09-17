@@ -31,7 +31,7 @@ export default function Join() {
                 <tr>
                   <th>2</th>
                   <td>Hart Hagerty</td>
-                  <td>1/4</td>
+                  <td>1/2</td>
                   <td><JoinButton /></td>
                 </tr>
                 <tr>
