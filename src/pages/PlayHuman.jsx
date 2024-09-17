@@ -10,7 +10,12 @@ export default function PlayHuman() {
 
       <div class='flex grow gap-48 items-center'>
         <CameraPlaceholder />
-        <CameraPlaceholder />
+
+        <div class='flex items-center justify-center border-slate-800 border-8 md:size-[480px] size-[80vw] bg-slate-500 rounded-3xl'>
+          <div class='text-5xl text-slate-800 text-center'>
+            Waiting...
+          </div>
+        </div>
       </div>
 
       <Footer />

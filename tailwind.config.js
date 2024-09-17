@@ -7,13 +7,8 @@ module.exports = {
     fontFamily: {
       'mono': ['Jetbrains Mono', 'monospace'],
       'sans': ['Prompt', 'sans-serif'],
-      'display': ['Bungee'],
     },
     extend: {
-      backgroundImage: {
-        'PvE': "url('/assets/xp_wallpaper.jpg')",
-        // 'PvP'
-      },
       keyframes: {
         sine: {
           '0%, 100%': { transform: 'translate(0, 0)' },
