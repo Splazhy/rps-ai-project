@@ -2,7 +2,7 @@ import { ImBlocked } from 'solid-icons/im'
 import { FaSolidArrowRightToBracket } from 'solid-icons/fa'
 import { Match, Show, Switch } from "solid-js"
 
-export default function JoinButton(props) {
+export default function JoinButton(props: any) { // FIXME: later
   return (
     <button class={'font-mono text-base btn btn-sm btn-success' + (props.disabled ? ' btn-disabled' : '')}>
       <Switch>

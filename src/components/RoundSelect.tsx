@@ -4,7 +4,7 @@ export default function RoundSelect() {
   const [selectedRadio, setSelectedRadio] = createSignal(3);
   const [numberValue, setNumberValue] = createSignal("");
 
-  const changeRadio = (num) => {
+  const changeRadio = (num: number) => {
     setSelectedRadio(num);
     setNumberValue("");
   }
@@ -53,7 +53,7 @@ export default function RoundSelect() {
       <div class="divider divider-horizontal"></div>
       <div class='flex flex-col'>
         First to:
-        <input type="number" name="first-to" value={numberValue()} oninput={(e) => setNumberValue(e.target.value)} class="textarea textarea-bordered rounded-xl text-base w-24" />
+        <input type="number" name="first-to" value={numberValue()} onInput={(e) => setNumberValue(e.target.value)} class="textarea textarea-bordered rounded-xl text-base w-24" />
       </div>
     </div>
   );
