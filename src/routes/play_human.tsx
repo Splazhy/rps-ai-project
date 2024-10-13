@@ -6,7 +6,7 @@ export default function PlayHuman() {
   return (
     <div class='flex flex-col min-h-screen items-center overflow-hidden font-mono'>
 
-      <Countdown />
+    <Countdown isActive={true} />
 
       <div class='flex grow gap-48 items-center'>
         <CameraPlaceholder />

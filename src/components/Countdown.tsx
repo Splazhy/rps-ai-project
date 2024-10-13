@@ -1,12 +1,19 @@
-import { createSignal, Show } from 'solid-js';
+import { createSignal, onCleanup, Show } from 'solid-js';
 
-export default function Countdown() {
+export default function Countdown(props: { isActive: boolean }) {
   const [countdown, setCountdown] = createSignal(3);
 
   setInterval(() => {
-    setCountdown(countdown() - 1);
+    if(props.isActive){
+      setCountdown(countdown() - 1);
+      if(countdown()<-1){
+        setCountdown(countdown() + 5);
+      }
+    }
   }, 1000);
 
+  
+ 
   return (
     <div class='mt-12 border-8 rounded-box font-mono text-9xl text-slate-800 flex flex-col p-8'>
       <Show when={countdown() >= 0}>
