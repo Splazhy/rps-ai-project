@@ -1,3 +1,4 @@
+import { A } from "@solidjs/router";
 import CameraPlaceholder from "../components/CameraPlaceholder";
 import Footer from "../components/Footer";
 import HomeButton from "../components/HomeButton";
@@ -10,14 +11,16 @@ export default function Ai() {
 
       <CameraPlaceholder/>
 
-      <form>
-        <RoundSelect />
+      <div>
+        <form name="round">
+          <RoundSelect />
+        </form>
         <div class='flex items-center gap-2 my-4'>
           <HomeButton />
           {/* <input type='submit' class='btn btn-wide btn-primary font-mono text-base' value="Start"></input> */}
-          <a href='/play_ai' class='btn btn-wide btn-primary font-mono text-base'>Start</a>
+          <A href='/play_ai' class='btn btn-wide btn-primary font-mono text-base'>Start</A>
         </div>
-      </form>
+      </div>
 
       </div>
 

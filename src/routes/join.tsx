@@ -2,8 +2,20 @@ import { CgDice6 } from 'solid-icons/cg'
 import Footer from "../components/Footer";
 import HomeButton from "../components/HomeButton";
 import JoinButton from "../components/JoinButton";
+import { createSignal, For, onMount } from 'solid-js';
+import { A } from '@solidjs/router';
+import { getRooms } from '~/backend/room';
+import { Room } from "~/data/room";
 
 export default function Join() {
+
+  const [rooms, setRooms] = createSignal<Room[]>();
+  async function refresh() {
+    setRooms(await getRooms());
+  }
+
+  onMount(() => refresh());
+
   return (
     <div class='min-h-screen flex flex-col overflow-hidden'>
 
@@ -22,24 +34,16 @@ export default function Join() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th>1</th>
-                  <td>Cy Ganderton</td>
-                  <td>1/2</td>
-                  <td><JoinButton /></td>
-                </tr>
-                <tr>
-                  <th>2</th>
-                  <td>Hart Hagerty</td>
-                  <td>1/2</td>
-                  <td><JoinButton /></td>
-                </tr>
-                <tr>
-                  <th>3</th>
-                  <td>Brice Swyre</td>
-                  <td>2/2</td>
-                  <td><JoinButton disabled={true} /></td>
-                </tr>
+                <For each={rooms()}>
+                  {(room, i) =>
+                    <tr>
+                      <th>{room.id}</th>
+                      <td>{room.host.name}</td>
+                      <td>{room.joined.size}/{room.capacity}</td>
+                      <td><JoinButton disabled={!room.vacant}/></td>
+                    </tr>
+                  }
+                </For>
               </tbody>
             </table>
           </div>
@@ -48,10 +52,10 @@ export default function Join() {
         <div class='flex flex-1 mt-auto items-end gap-2'>
           <HomeButton />
           {/* TODO: disable this button when there's zero host */}
-          <a href='' class={'btn btn-wide btn-success font-mono text-base'}>
+          <A href='' class={'btn btn-wide btn-success font-mono text-base'}>
             <CgDice6 />
             Join a random match
-          </a>
+          </A>
         </div>
 
       </div>
