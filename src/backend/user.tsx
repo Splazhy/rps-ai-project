@@ -1,6 +1,6 @@
 "use server";
 
-import { dummyUser, User } from "~/data/user";
+import { dummyUser, User } from "~/data/types";
 
 let users = new Map<number, User>();
 

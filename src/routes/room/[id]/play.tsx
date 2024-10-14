@@ -1,6 +1,6 @@
-import CameraPlaceholder from "../components/CameraPlaceholder";
-import Footer from "../components/Footer";
-import Countdown from '../components/Countdown';
+import CameraPlaceholder from "~/components/CameraPlaceholder";
+import Countdown from "~/components/Countdown";
+import Footer from "~/components/Footer";
 
 export default function PlayHuman() {
   return (

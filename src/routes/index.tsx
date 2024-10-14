@@ -5,8 +5,8 @@ import Logo from '../components/Logo';
 import { A, useNavigate } from '@solidjs/router';
 import { onMount } from 'solid-js';
 import { changeUsername, createUser, removeUser } from '~/backend/user';
-import { setUserId, setUsername, userId, username } from '../data/user';
 import { createRoom } from '~/backend/room';
+import { setUserId, setUsername, userId, username } from '~/data/types';
 
 
 function isEmptyString(s: string) {
@@ -23,8 +23,8 @@ export default function Home() {
   onMount(async () => {
     if (userId() === -1) {
       setUserId(await createUser());
-      changeUsername(userId(), username());
     }
+    changeUsername(userId(), username());
   });
 
   const navigate = useNavigate();

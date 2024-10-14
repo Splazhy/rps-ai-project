@@ -1,17 +1,24 @@
 import { CgDice6 } from 'solid-icons/cg'
 import Footer from "../components/Footer";
 import HomeButton from "../components/HomeButton";
-import JoinButton from "../components/JoinButton";
-import { createSignal, For, onMount } from 'solid-js';
-import { A } from '@solidjs/router';
-import { getRooms } from '~/backend/room';
-import { Room } from "~/data/room";
+import { createSignal, For, Match, onMount, Switch } from 'solid-js';
+import { A, useNavigate } from '@solidjs/router';
+import { getRooms, joinRoom } from '~/backend/room';
+import { Room, userId, username } from '~/data/types';
+import { ImBlocked } from 'solid-icons/im';
+import { FaSolidArrowRightToBracket } from 'solid-icons/fa';
+import { changeUsername } from '~/backend/user';
 
 export default function Join() {
-
+  const navigate = useNavigate();
   const [rooms, setRooms] = createSignal<Room[]>();
   async function refresh() {
     setRooms(await getRooms());
+  }
+
+  async function enterRoom(roomId: number) {
+    await changeUsername(userId(), username());
+    navigate(`/room/${roomId}`);
   }
 
   onMount(() => refresh());
@@ -35,14 +42,28 @@ export default function Join() {
               </thead>
               <tbody>
                 <For each={rooms()}>
-                  {(room, i) =>
+                  {(room) => {
+                    return (
                     <tr>
                       <th>{room.id}</th>
                       <td>{room.host.name}</td>
                       <td>{room.joined.size}/{room.capacity}</td>
-                      <td><JoinButton disabled={!room.vacant}/></td>
-                    </tr>
-                  }
+                      <td>
+                        <button onClick={() => enterRoom(room.id)} class={'font-mono text-base btn btn-sm btn-success' + (!room.vacant ? ' btn-disabled' : '')}>
+                          <Switch>
+                            <Match when={!room.vacant}>
+                              <ImBlocked />
+                              Full
+                            </Match>
+                            <Match when={room.vacant}>
+                              <FaSolidArrowRightToBracket />
+                              Join
+                            </Match>
+                          </Switch>
+                        </button>
+                      </td>
+                    </tr>);
+                    }}
                 </For>
               </tbody>
             </table>
@@ -51,8 +72,7 @@ export default function Join() {
 
         <div class='flex flex-1 mt-auto items-end gap-2'>
           <HomeButton />
-          {/* TODO: disable this button when there's zero host */}
-          <A href='' class={'btn btn-wide btn-success font-mono text-base'}>
+          <A href='' class={`btn btn-wide btn-success font-mono text-base ${(rooms()?.length || 0) > 0 ? '' : 'btn-disabled'}`}>
             <CgDice6 />
             Join a random match
           </A>

@@ -1,8 +1,7 @@
 "use server";
 
-import { dummyRoom, Room } from "~/data/room";
+import { dummyRoom, Room, User } from "~/data/types";
 import { getUser } from "./user";
-import { User } from "~/data/user";
 
 
 let rooms = new Map<number, Room>();
@@ -16,7 +15,7 @@ export async function createRoom(hostId: number): Promise<number> {
       let room: Room = {
         id: roomId,
         host: host,
-        joined: new Set<User>([host]),
+        joined: new Set<User>([]),
         capacity: 2,
         vacant: true,
       };
@@ -31,12 +30,14 @@ export async function getRoom(roomId: number) {
   return rooms.get(roomId) || dummyRoom;
 }
 
-export async function joinRoom(roomId: number, userId: number) {
+export async function joinRoom(roomId: number, userId: number): Promise<boolean> {
   let room = rooms.get(roomId);
-  if (room === undefined) {
-    return;
+  if (room === undefined || room.joined.size >= room.capacity) {
+    return false;
   }
   room.joined.add(await getUser(userId));
+  room.vacant = room.joined.size < room.capacity;
+  return true;
 }
 
 export async function leaveRoom(roomId: number, userId: number) {
@@ -50,6 +51,7 @@ export async function leaveRoom(roomId: number, userId: number) {
     }
 
     room.joined.delete(await getUser(userId));
+    room.vacant = room.joined.size < room.capacity;
 }
 
 export async function removeRoom(roomId: number) {

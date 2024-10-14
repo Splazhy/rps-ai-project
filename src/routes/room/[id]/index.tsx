@@ -1,14 +1,12 @@
-import { createEffect, createSignal, For, Match, onCleanup, onMount, Switch } from "solid-js";
-import { A, useNavigate, useParams } from "@solidjs/router";
+import { createEffect, createSignal, For, Match, onCleanup, onMount, Show, Switch } from "solid-js";
+import { useNavigate, useParams } from "@solidjs/router";
 import CameraPlaceholder from "~/components/CameraPlaceholder";
-import KickButton from "~/components/KickButton";
 import RoundSelect from "~/components/RoundSelect";
 import HomeButton from "~/components/HomeButton";
 import Footer from "~/components/Footer";
-import { userId } from "../../data/user";
-import { getRoom, leaveRoom } from "~/backend/room";
-import { getUser } from "~/backend/user";
-import { dummyRoom, Room } from "~/data/room";
+import { getRoom, joinRoom, leaveRoom } from "~/backend/room";
+import { dummyRoom, Room, userId } from "~/data/types";
+import { FaSolidDoorOpen } from "solid-icons/fa";
 
 
 export default function Host() {
@@ -16,30 +14,48 @@ export default function Host() {
   const param = useParams();
   const [room, setRoom] = createSignal<Room>(dummyRoom);
 
+  const [isHost, setHost] = createSignal(false);
+  const [isReady, setReady] = createSignal(false);
+  let isFull: boolean = false;
+
+  // HACK: manual refreshing
+  async function refresh() {
+    setRoom(await getRoom(+param.id));
+  }
+
+  function startGame() {
+    navigate("play");
+  }
+
   onMount(async () => {
     if (userId() === -1) {
       navigate("/");
     }
     setRoom(await getRoom(+param.id));
+    isFull = !(await joinRoom(room().id, userId()));
+    setHost(room().host.id === userId());
+    await refresh();
   });
 
   onCleanup(async () => {
     await leaveRoom(+param.id, userId());
   });
 
-  const [isReady, setReady] = createSignal(false);
-
   createEffect(() => {
     setReady(room().joined.size === room().capacity);
   });
 
-
-
   return (
     <Switch>
-      <Match when={room() === undefined}>
+      <Match when={room().id === -1}>
         <div class='text-3xl text-center m-4 flex flex-col items-center gap-8 h-[50vh] justify-center'>
           Error: Room not found
+          <HomeButton />
+        </div>
+      </Match>
+      <Match when={isFull}>
+        <div class='text-3xl text-center m-4 flex flex-col items-center gap-8 h-[50vh] justify-center'>
+          This room is already full.
           <HomeButton />
         </div>
       </Match>
@@ -65,7 +81,12 @@ export default function Host() {
                   <tr>
                     <th>{user.id}</th>
                     <td>{user.name} {(userId() === user.id) ? "(You)" : ""}</td>
-                    <td><KickButton disabled={userId() === user.id} /></td>
+                    <td>
+                      <button class={'font-mono text-base btn btn-error btn-sm' + ((!isHost() || userId() === user.id) ? ' btn-disabled' : '')}>
+                        <FaSolidDoorOpen />
+                        Kick
+                      </button>
+                    </td>
                   </tr>
                 )}
               </For>
@@ -74,12 +95,22 @@ export default function Host() {
         </div>
 
         <div>
-          <form name="round">
-            <RoundSelect />
-          </form>
+          <Show when={isHost()}>
+            <form name="round">
+              <RoundSelect />
+            </form>
+          </Show>
           <div class='flex items-center gap-2 my-4'>
             <HomeButton />
-            <input type='submit' disabled={!isReady()} class={'btn btn-wide btn-secondary font-mono text-base' + (isReady() ? '' : ' btn-disabled')} value={isReady() ? 'Start' : 'Waiting for players'}></input>
+            <button onClick={refresh} class='btn font-mono text-base'>Refresh</button>
+            <Show when={isHost()}>
+              <button onClick={startGame} class={'btn btn-wide btn-secondary font-mono text-base' + (isReady() ? '' : ' btn-disabled')}>
+                {isReady() ? 'Start' : 'Waiting for players'}
+              </button>
+            </Show>
+            <Show when={!isHost()}>
+              <p>Waiting for host to start...</p>
+            </Show>
           </div>
         </div>
 
