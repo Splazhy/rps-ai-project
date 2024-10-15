@@ -96,7 +96,6 @@ export default function Host() {
       socket.emit("start-match", _room.id, {
         round: round(),
         use_camera: useCamera(),
-        advanced: true,
       });
     }
   }

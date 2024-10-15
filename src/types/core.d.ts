@@ -40,6 +40,5 @@ export type Round = {
 
 export type MatchSettings = {
   round: number, // first to N
-  advanced: boolean, // +trident +lizard +gun
   use_camera: boolean, // if false, use buttons instead
 };

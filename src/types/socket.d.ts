@@ -29,6 +29,7 @@ export interface ServerToClientEvents {
   "match-aborted": () => void;
   "round-done": (result: RoundResult) => void;
   "match-ended": (winnerUserId: string) => void;
+  "image-sent": (imageURL: string) => void;
 }
 
 export interface ClientToServerEvents {
@@ -46,6 +47,7 @@ export interface ClientToServerEvents {
   "get-match-settings": (userId: string, callback: (settings: MatchSettings) => void) => void;
   "abort-match": (roomId: string) => void;
   "play-hand": (uuid: string, hand: Hand) => void;
+  "send-captured-image": (uuid: string, image: string) => void;
 }
 
 

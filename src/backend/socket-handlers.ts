@@ -117,12 +117,21 @@ export function handleEverything(io: sServer, socket: sSocket) {
     }
   });
 
+  socket.on("send-captured-image", (uuid, image) => {
+    let user = users[uuid];
+    if (!user || !user.roomId)
+      return;
+    socket.broadcast.to(user.roomId).emit("image-sent", image);
+  });
+
   socket.on("play-hand", (userId, hand) => {
     let user = users[userId];
     let roomId = user.roomId;
     if (!roomId) return;
     let match = matches[roomId];
     if (!match) return;
+
+    // console.log(`${userId} played ${hand}`);
 
     let round = match.rounds[match.rounds.length-1];
     let handA = round.handA;

@@ -20,6 +20,11 @@ export default function PlayHuman() {
   const [matchHasEnded, setMatchHasEnded] = createSignal(false);
   const [won, setWon] = createSignal(true);
   const [capture, setCaptureDataURL] = createSignal<string>();
+  const [opponentImageURL, setOpponentImageURL] = createSignal<string>();
+
+  socket.on("image-sent", async (imageURL) => {
+    setOpponentImageURL(imageURL);
+  });
 
   socket.on("match-aborted", () => {
     navigate("../");
@@ -44,6 +49,7 @@ export default function PlayHuman() {
       case "lose": setRoundWonB(roundWonB() + 1);
         break;
     }
+    setCaptureDataURL(undefined);
     setHasPlayed(false);
   });
 
@@ -64,6 +70,12 @@ export default function PlayHuman() {
   function playHand(hand: Hand) {
     setHasPlayed(true);
     socket.emit("play-hand", userId, hand);
+    if (useCamera()) {
+      let capturedURL = capture();
+      if (capturedURL && useCamera()) {
+        socket.emit("send-captured-image", userId, capturedURL);
+      }
+    }
   }
 
   createEffect(async () => {
@@ -72,7 +84,17 @@ export default function PlayHuman() {
       if (!captureImg)
         return;
       let prediction = await predict(captureImg);
-      console.log(prediction);
+      let maxConfidence = -1;
+      let maxConfidenceHand: string = '';
+      for (const key in prediction) {
+        const value = prediction[key as Hand]; // Type assertion
+        if (value > maxConfidence) {
+          maxConfidence = value;
+          maxConfidenceHand = key;
+        }
+      }
+      let hand: Hand = maxConfidenceHand as Hand;
+      playHand(hand);
     }
   });
 
@@ -91,7 +113,10 @@ export default function PlayHuman() {
       </Show>
       <Show when={useCamera() && !matchHasEnded()}>
         <div class='flex items-center justify-center border-slate-800 border-8 md:size-[480px] size-[80vw] bg-slate-500 rounded-3xl'>
-          <CameraFeed captureImage={setCaptureDataURL}/>
+          <CameraFeed captureImage={setCaptureDataURL} />
+        </div>
+        <div class='flex items-center justify-center border-slate-800 border-8 md:size-[480px] size-[80vw] bg-slate-500 rounded-3xl'>
+          <img src={opponentImageURL()}></img>
         </div>
       </Show>
       <Show when={matchHasEnded()}>
