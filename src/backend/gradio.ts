@@ -1,6 +1,7 @@
 'use server'
 
 import { Client } from '@gradio/client'
+import { Hand } from '~/types/core'
 if (!process.env.GRADIO_SERVER) {
     throw new Error('GRADIO_SERVER environment variable is not set')
 }
@@ -15,7 +16,6 @@ if (process.env.GRADIO_USERNAME && process.env.GRADIO_PASSWORD) {
 
 const client = new Client(process.env.GRADIO_SERVER, clientOptions)
 
-type Hand = 'rock' | 'paper' | 'scissors' | 'lizard' | 'trident' | 'gun'
 type PredictResult = {
     [hand in Hand]: number
 }

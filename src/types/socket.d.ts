@@ -6,7 +6,7 @@ import type {
   Socket as SocketforServer,
 } from "socket.io";
 import type { Socket as SocketforClient } from "socket.io-client";
-import { Room, User } from "./core";
+import { Hand, Match, MatchSettings, Room, RoomJoinResult, RoundResult, User } from "./core";
 
 interface SocketServer extends HTTPServer {
   io?: IOServer;
@@ -19,23 +19,35 @@ export interface SocketWithIO extends NetSocket {
 export interface ServerToClientEvents {
   "user-connected": (user: User) => void;
   "user-disconnected": (name: string) => void;
+
   "room-data-changed": (room: Room) => void;
   "room-record-changed": (rooms: Room[]) => void;
   "kicked-out": () => void;
+
+  "match-started": () => void;
+  "match-entered": () => void;
+  "match-aborted": () => void;
+  "match-data-changed": (match: Match) => void;
+  "round-done": (result: RoundResult) => void;
+  "match-ended": (winnerUserId: string) => void;
 }
 
 export interface ClientToServerEvents {
   "request-user": (uuid: string, callback: (user: User) => void) => void;
   "change-username": (uuid: string, name: string) => void;
+
   "host-new-room": (host_uuid: string, callback: (room: Room) => void) => void;
   "join-room": (uuid: string, roomId: string, callback: (result: RoomJoinResult) => void) => void;
   "kick": (uuid: string) => void;
   "leave-room": (uuid: string) => void;
-  "start-game": (roomId: string) => void;
   "get-all-rooms": (callback: (rooms: Room[]) => void) => void;
+
+  "start-match": (roomId: string, settings: MatchSettings) => void;
+  "enter-match": (userId: string) => void;
+  "abort-match": (roomId: string) => void;
+  "play-hand": (uuid: string, hand: Hand) => void;
 }
 
-export type RoomJoinResult = "invalid-user-id" | "invalid-room-id" | "full" | "success";
 
 interface InterServerEvents {
   // ping: () => void;

@@ -1,7 +1,7 @@
 import { CgDice6 } from 'solid-icons/cg'
 import Footer from "../components/Footer";
 import HomeButton from "../components/HomeButton";
-import { createSignal, For, Match, onMount, Show, Switch } from 'solid-js';
+import { createEffect, createSignal, For, Match, onMount, Show, Switch } from 'solid-js';
 import { A, useNavigate } from '@solidjs/router';
 import { Room } from '~/types/core';
 import { ImBlocked } from 'solid-icons/im';
@@ -11,6 +11,7 @@ import { socket } from '~/lib/socket';
 export default function Join() {
   const navigate = useNavigate();
   const [rooms, setRooms] = createSignal<Room[]>();
+  const [canJoinAny, setCanJoinAny] = createSignal(false);
 
   socket.on("room-record-changed", (rooms: Room[]) => {
     setRooms(rooms);
@@ -22,16 +23,24 @@ export default function Join() {
     });
   });
 
+  createEffect(() => {
+    let _rooms = rooms();
+    if (_rooms) {
+      let availableRooms = _rooms.filter((room => room.vacant));
+      setCanJoinAny(availableRooms.length > 0);
+    }
+  });
+
   function enterRoom(roomId: string) {
     navigate(`/room/${roomId}`);
   }
 
   function joinRandom() {
-    let allRooms = rooms();
-    if (!allRooms)
-      return;
-    let availableRooms = allRooms.filter((room => room.vacant));
-    enterRoom(availableRooms[Math.round(Math.random() * (availableRooms.length - 1))].id);
+    let _rooms = rooms();
+    if (_rooms) {
+      let availableRooms = _rooms.filter((room => room.vacant));
+      enterRoom(availableRooms[Math.round(Math.random() * (availableRooms.length - 1))].id);
+    }
   }
 
   return (
@@ -88,7 +97,7 @@ export default function Join() {
 
         <div class='flex flex-1 mt-auto items-end gap-2'>
           <HomeButton />
-          <button onClick={joinRandom} class={`btn btn-wide btn-success font-mono text-base ${(rooms()?.length || 0) > 0 ? '' : 'btn-disabled'}`}>
+          <button onClick={joinRandom} class={`btn btn-wide btn-success font-mono text-base ${canJoinAny() ? '' : 'btn-disabled'}`}>
             <CgDice6 />
             Join a random match
           </button>
