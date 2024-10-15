@@ -12,8 +12,8 @@ export default function Footer() {
 
   return (
     <footer class="footer footer-center mt-auto font-sans bg-base-300 text-base-content p-4">
-      <aside>
-        <p>
+      <aside class="flex flex-col items-center">
+        <p class="text-sm md:text-base lg:text-lg text-center">
           โปรเจกต์วิชา 05506210 ARTIFICIAL INTELLIGENCE ของ&nbsp;
           <span class="tooltip before:whitespace-pre-wrap before:content-[attr(data-tip)]" data-tip={groupMembers}>
             <span class='text-indigo-500 underline font-bold'>กลุ่ม ReLU</span>

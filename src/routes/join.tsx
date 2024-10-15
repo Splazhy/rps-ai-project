@@ -1,4 +1,4 @@
-import { CgDice6 } from 'solid-icons/cg'
+import { CgDice6 } from 'solid-icons/cg';
 import Footer from "../components/Footer";
 import HomeButton from "../components/HomeButton";
 import { createSignal, For, Match, onMount, Show, Switch } from 'solid-js';
@@ -28,27 +28,27 @@ export default function Join() {
 
   function joinRandom() {
     let allRooms = rooms();
-    if (!allRooms)
-      return;
-    let availableRooms = allRooms.filter((room => room.vacant));
-    enterRoom(availableRooms[Math.round(Math.random() * (availableRooms.length - 1))].id);
+    if (!allRooms) return;
+    let availableRooms = allRooms.filter((room) => room.vacant);
+    if (availableRooms.length === 0) return; // Check for available rooms
+    enterRoom(availableRooms[Math.floor(Math.random() * availableRooms.length)].id);
   }
 
   return (
-    <div class='min-h-screen flex flex-col overflow-hidden'>
+    <div class='min-h-screen flex flex-col overflow-hidden p-4 md:p-8'>
 
-      <div class="flex flex-col mt-8 items-center gap-8">
+      <div class="flex flex-col mt-8 items-center gap-6">
 
-        <div>
+        <div class='w-full'>
           <h1 class='text-center text-2xl font-mono'>Available Hosts</h1>
-          <div class='w-fit max-h-[70vh] overflow-scroll'>
-            <table class="table table-zebra">
+          <div class='overflow-x-auto'>
+            <table class="table-auto w-full max-h-[70vh] overflow-scroll">
               <thead>
                 <tr>
-                  <th>No.</th>
-                  <th>Host name</th>
-                  <th>Size</th>
-                  <th>Join</th>
+                  <th class="px-2 py-1">No.</th>
+                  <th class="px-2 py-1">Host name</th>
+                  <th class="px-2 py-1">Size</th>
+                  <th class="px-2 py-1">Join</th>
                 </tr>
               </thead>
               <tbody>
@@ -58,24 +58,25 @@ export default function Join() {
                       {(room, i) => {
                         return (
                           <tr>
-                            <th>{i() + 1}</th>
-                            <td>{room.host.name}</td>
-                            <td>{room.joined.length}/{room.capacity}</td>
-                            <td>
-                              <button onClick={() => enterRoom(room.id)} class={'font-mono text-base btn btn-sm btn-success' + (!room.vacant ? ' btn-disabled' : '')}>
+                            <td class="px-2 py-1">{i() + 1}</td>
+                            <td class="px-2 py-1">{room.host.name}</td>
+                            <td class="px-2 py-1">{room.joined.length}/{room.capacity}</td>
+                            <td class="px-2 py-1">
+                              <button onClick={() => enterRoom(room.id)} class={`font-mono text-base btn btn-sm btn-success ${!room.vacant ? 'btn-disabled' : ''}`}>
                                 <Switch>
                                   <Match when={!room.vacant}>
-                                    <ImBlocked />
+                                    <ImBlocked class="inline mr-1" />
                                     Full
                                   </Match>
                                   <Match when={room.vacant}>
-                                    <FaSolidArrowRightToBracket />
+                                    <FaSolidArrowRightToBracket class="inline mr-1" />
                                     Join
                                   </Match>
                                 </Switch>
                               </button>
                             </td>
-                          </tr>);
+                          </tr>
+                        );
                       }}
                     </For>
                   )}
@@ -86,10 +87,10 @@ export default function Join() {
           </div>
         </div>
 
-        <div class='flex flex-1 mt-auto items-end gap-2'>
+        <div class='flex flex-col md:flex-row mt-auto items-end gap-2'>
           <HomeButton />
-          <button onClick={joinRandom} class={`btn btn-wide btn-success font-mono text-base ${(rooms()?.length || 0) > 0 ? '' : 'btn-disabled'}`}>
-            <CgDice6 />
+          <button onClick={joinRandom} class={`btn btn-wide btn-success font-mono text-base ${rooms()?.length ? '' : 'btn-disabled'}`}>
+            <CgDice6 class="inline mr-1" />
             Join a random match
           </button>
         </div>

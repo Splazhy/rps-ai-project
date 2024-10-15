@@ -1,0 +1,13 @@
+.camera-feed-container {
+    position: relative;
+    width: 100%; /* ทำให้ container ขยายเต็มความกว้าง */
+    height: auto; /* ความสูงจะปรับตาม aspect ratio */
+    overflow: hidden; /* ซ่อนส่วนที่เกิน */
+  }
+  
+  .responsive-video {
+    width: 100%; /* ทำให้ video ขยายเต็มความกว้างของ container */
+    height: auto; /* ความสูงปรับอัตโนมัติตาม aspect ratio */
+    object-fit: cover; /* ปรับขนาดให้พอดีกับ container โดยไม่เสียสัดส่วน */
+  }
+  

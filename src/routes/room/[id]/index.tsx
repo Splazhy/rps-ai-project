@@ -92,7 +92,7 @@ export default function Host() {
       </Match>
       <Match when={hasJoined()}>
         <div class='min-h-screen flex flex-col overflow-hidden'>
-          <div class='flex flex-wrap basis-0 grow gap-8 justify-center items-center py-8'>
+          <div class='flex flex-wrap basis-0 grow gap-8 justify-center items-center py-4 md:py-8'>
 
             <CameraPlaceholder />
 
@@ -102,7 +102,7 @@ export default function Host() {
                   {(room: Room) => (
                     <div class='min-w-fit'>
                       <h1 class='text-center text-2xl font-mono'>Players ({room.joined.length}/{room.capacity})</h1>
-                      <table class="table table-zebra">
+                      <table class="table table-zebra w-full md:w-auto">
                         <thead>
                           <tr>
                             <th>No.</th>
@@ -133,13 +133,13 @@ export default function Host() {
               )}
             </Show>
 
-            <div>
+            <div class='flex flex-col items-center'>
               <Show when={isHost()}>
                 <form name="round">
                   <RoundSelect />
                 </form>
               </Show>
-              <div class='flex items-center gap-2 my-4'>
+              <div class='flex flex-col items-center gap-2 my-4'>
                 <HomeButton />
                 <Show when={isHost()}>
                   <button onClick={startGame} class={'btn btn-wide btn-secondary font-mono text-base' + (isReady() ? '' : ' btn-disabled')}>

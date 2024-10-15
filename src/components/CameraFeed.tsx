@@ -1,6 +1,6 @@
 import { onCleanup, onMount } from 'solid-js';
 import { createSignal } from 'solid-js';
-
+import './CameraFeed.css'; // Import the CSS file
 
 export default function CameraFeed() {
   const [videoStream, setVideoStream] = createSignal<MediaStream | null>(null);
@@ -28,8 +28,8 @@ export default function CameraFeed() {
   });
 
   return (
-    <div>
-      <video ref={videoRef} autoplay playsinline></video>
+    <div class="camera-feed-container">
+      <video ref={videoRef} autoplay playsinline class="responsive-video"></video>
     </div>
   );
 }
