@@ -4,7 +4,7 @@ import Footer from '../components/Footer';
 import Logo from '../components/Logo';
 import { A, useNavigate } from '@solidjs/router';
 import { socket } from '~/lib/socket';
-import { createEffect, createResource, createSignal, onMount } from 'solid-js';
+import { createEffect, createSignal, onMount } from 'solid-js';
 import { Room, User } from '~/types/core';
 
 function isEmptyString(s: string) {
