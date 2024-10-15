@@ -1,10 +1,20 @@
-import { onCleanup, onMount } from 'solid-js';
+import { createEffect, onCleanup, onMount, Setter } from 'solid-js';
 import { createSignal } from 'solid-js';
 
 
-export default function CameraFeed() {
+export default function CameraFeed(props: {
+  captureImage?: Setter<string | undefined>
+}) {
   const [videoStream, setVideoStream] = createSignal<MediaStream | null>(null);
+  const [imageDataURL, setImageDataURL] = createSignal<string>();
   let videoRef: HTMLVideoElement | undefined;
+  let canvasRef: HTMLCanvasElement | undefined;
+
+  createEffect(() => {
+    if (props.captureImage) {
+      props.captureImage(imageDataURL());
+    }
+  });
 
   // NOTE: For security, camera must be access within https only,
   //       so this can only be test on localhost and https.
@@ -27,9 +37,26 @@ export default function CameraFeed() {
     }
   });
 
+  const captureImage = () => {
+    if (videoRef && canvasRef) {
+      const context = canvasRef.getContext("2d");
+      if (context) {
+        // Set the canvas size to match the video size
+        canvasRef.width = videoRef.videoWidth;
+        canvasRef.height = videoRef.videoHeight;
+        // Draw the current frame of the video onto the canvas
+        context.drawImage(videoRef, 0, 0, videoRef.videoWidth, videoRef.videoHeight);
+        // Convert the canvas drawing to a Blob
+        setImageDataURL(canvasRef.toDataURL()); // You can change the MIME type if needed
+      }
+    }
+  };
+
   return (
     <div>
       <video ref={videoRef} autoplay playsinline></video>
+      <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
+      <button onClick={captureImage} class='btn btn-primary'>Capture</button>
     </div>
   );
 }

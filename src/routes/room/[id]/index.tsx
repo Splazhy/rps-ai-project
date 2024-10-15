@@ -6,7 +6,7 @@ import HomeButton from "~/components/HomeButton";
 import Footer from "~/components/Footer";
 import { FaSolidDoorOpen } from "solid-icons/fa";
 import { socket } from "~/lib/socket";
-import { MatchSettings, Room, RoomJoinResult, User } from "~/types/core";
+import { Room, RoomJoinResult, User } from "~/types/core";
 
 let userId: string = "";
 
@@ -21,11 +21,8 @@ export default function Host() {
 
   const [user, setUser] = createSignal<User>();
   const [room, setRoom] = createSignal<Room>();
-  const [gameSettings, setGameSettings] = createSignal<MatchSettings>({
-    round: 3,
-    advanced: false,
-    use_camera: true,
-  });
+  const [round, setRound] = createSignal(3);
+  const [useCamera, setUseCamera] = createSignal(false);
 
   const [isReady, setReady] = createSignal(false);
 
@@ -58,11 +55,11 @@ export default function Host() {
   });
 
   onMount(() => {
-    userId = localStorage.getItem('userId') || "";
+    userId = sessionStorage.getItem('userId') || "";
     let roomId = useParams().id;
     socket.emit("request-user", userId, (user: User) => {
       setUser(user);
-      localStorage.setItem('userId', user.uuid);
+      sessionStorage.setItem('userId', user.uuid);
       socket.emit("join-room", user.uuid, roomId, (success: RoomJoinResult) => {
         switch (success) {
           case "success":
@@ -96,7 +93,11 @@ export default function Host() {
   function startGame() {
     let _room = room();
     if (_room) {
-      socket.emit("start-match", _room.id, gameSettings());
+      socket.emit("start-match", _room.id, {
+        round: round(),
+        use_camera: useCamera(),
+        advanced: true,
+      });
     }
   }
 
@@ -120,7 +121,7 @@ export default function Host() {
         <div class='min-h-screen flex flex-col overflow-hidden'>
           <div class='flex flex-wrap basis-0 grow gap-8 justify-center items-center py-8'>
 
-            <CameraPlaceholder />
+            <CameraPlaceholder enabledChanged={setUseCamera} />
 
             <Show when={user()} keyed>
               {(user: User) => (
@@ -162,7 +163,7 @@ export default function Host() {
             <div>
               <Show when={isHost()}>
                 <form name="round">
-                  <RoundSelect />
+                  <RoundSelect roundChanged={setRound} />
                 </form>
               </Show>
               <div class='flex items-center gap-2 my-4'>

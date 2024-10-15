@@ -108,6 +108,15 @@ export function handleEverything(io: sServer, socket: sSocket) {
     }
   });
 
+  socket.on("get-match-settings", (userId: string, callback: (settings: MatchSettings) => void) => {
+    let user = users[userId];
+    let roomId = user.roomId;
+    if (roomId) {
+      let match = matches[roomId];
+      callback(match.settings);
+    }
+  });
+
   socket.on("play-hand", (userId, hand) => {
     let user = users[userId];
     let roomId = user.roomId;
@@ -146,11 +155,9 @@ export function handleEverything(io: sServer, socket: sSocket) {
       } else {
         io.to(handA.userId).emit("round-done", resultA);
         io.to(handB.userId).emit("round-done", resultB);
-        setTimeout(() => {
-          let winner = (scoreA > scoreB) ? handA.userId : handB.userId;
-          io.to(handA.userId).emit("match-ended", winner);
-          io.to(handB.userId).emit("match-ended", winner);
-        }, 3000);
+        let winner = (scoreA > scoreB) ? handA.userId : handB.userId;
+        io.to(handA.userId).emit("match-ended", winner);
+        io.to(handB.userId).emit("match-ended", winner);
       }
     }
   });
@@ -161,7 +168,7 @@ export function handleEverything(io: sServer, socket: sSocket) {
   })
 
   socket.on("request-user", (uuid: string, callback: (user: User) => void) => {
-    if (uuid === "") { // localStorage is empty, generate new uuid
+    if (uuid === "") { // sessionStorage is empty, generate new uuid
       uuid = uuidv4();
     }
     if (!users[uuid]) { // create new user if uuid doesn't exist
@@ -250,7 +257,7 @@ export function handleEverything(io: sServer, socket: sSocket) {
 
   socket.on("change-username", (uuid, name) => {
     if (!users[uuid]) {
-      console.log(`user ${uuid} doesn't exist`);
+      // console.log(`user ${uuid} doesn't exist`);
       return;
     }
     users[uuid].name = name;

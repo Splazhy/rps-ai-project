@@ -1,10 +1,10 @@
 import { useNavigate, useParams } from "@solidjs/router";
-import { createSignal, onCleanup, onMount, Show } from "solid-js";
-import CameraPlaceholder from "~/components/CameraPlaceholder";
-import Countdown from "~/components/Countdown";
+import { createEffect, createSignal, onCleanup, onMount, Show } from "solid-js";
+import { predict } from "~/backend/gradio";
+import CameraFeed from "~/components/CameraFeed";
 import Footer from "~/components/Footer";
 import { socket } from "~/lib/socket";
-import { Hand, Match, RoundResult, User } from "~/types/core";
+import { Hand, MatchSettings, RoundResult, User } from "~/types/core";
 
 let userId: string = "";
 
@@ -18,6 +18,8 @@ export default function PlayHuman() {
   const [useCamera, setUseCamera] = createSignal(false);
   const [hasPlayed, setHasPlayed] = createSignal(false);
   const [matchHasEnded, setMatchHasEnded] = createSignal(false);
+  const [won, setWon] = createSignal(true);
+  const [capture, setCaptureDataURL] = createSignal<string>();
 
   socket.on("match-aborted", () => {
     navigate("../");
@@ -25,9 +27,12 @@ export default function PlayHuman() {
 
   socket.on("match-ended", (winnerId: string) => {
     if (winnerId === userId) {
-      console.log("you won!");
+      setWon(true); // congrats! :D
+      setTimeout(() => {
+        socket.emit("abort-match", roomId);
+      }, 3000);
     } else {
-      console.log("you lost!");
+      setWon(false); // sucks to suck
     }
     setMatchHasEnded(true);
   });
@@ -40,12 +45,15 @@ export default function PlayHuman() {
         break;
     }
     setHasPlayed(false);
-  })
+  });
 
   onMount(() => {
-    userId = localStorage.getItem('userId') || "";
+    userId = sessionStorage.getItem('userId') || "";
     socket.emit("request-user", userId, (user: User) => {
-      localStorage.setItem('userId', user.uuid);
+      sessionStorage.setItem('userId', user.uuid);
+    });
+    socket.emit("get-match-settings", userId, (settings: MatchSettings) => {
+      setUseCamera(settings.use_camera);
     });
   });
 
@@ -57,6 +65,16 @@ export default function PlayHuman() {
     setHasPlayed(true);
     socket.emit("play-hand", userId, hand);
   }
+
+  createEffect(async () => {
+    if (!hasPlayed()) {
+      let captureImg = capture();
+      if (!captureImg)
+        return;
+      let prediction = await predict(captureImg);
+      console.log(prediction);
+    }
+  });
 
   return (
     <div class='flex flex-col min-h-screen items-center overflow-hidden font-mono'>
@@ -71,11 +89,13 @@ export default function PlayHuman() {
           <button onClick={() => playHand("gun")} class={`btn btn-circle btn-lg ${hasPlayed() ? 'btn-disabled' : ''}`}><img src="/gun.png" class='size-12' /></button>
         </span>
       </Show>
-      <Show when={useCamera()}>
-        Use Cam
+      <Show when={useCamera() && !matchHasEnded()}>
+        <div class='flex items-center justify-center border-slate-800 border-8 md:size-[480px] size-[80vw] bg-slate-500 rounded-3xl'>
+          <CameraFeed captureImage={setCaptureDataURL}/>
+        </div>
       </Show>
       <Show when={matchHasEnded()}>
-        <div class='text-[4em]'>Match has Ended</div>
+        <div class='text-[4em]'>{won() ? "You Won!" : "You Lost!"}</div>
       </Show>
       <Footer />
     </div>
