@@ -26,6 +26,14 @@ export default function Join() {
     navigate(`/room/${roomId}`);
   }
 
+  function joinRandom() {
+    let allRooms = rooms();
+    if (!allRooms)
+      return;
+    let availableRooms = allRooms.filter((room => room.vacant));
+    enterRoom(availableRooms[Math.round(Math.random() * (availableRooms.length - 1))].id);
+  }
+
   return (
     <div class='min-h-screen flex flex-col overflow-hidden'>
 
@@ -47,10 +55,10 @@ export default function Join() {
                 <Show when={rooms()} keyed>
                   {(rooms) => (
                     <For each={rooms}>
-                      {(room) => {
+                      {(room, i) => {
                         return (
                           <tr>
-                            <th>{room.id}</th>
+                            <th>{i() + 1}</th>
                             <td>{room.host.name}</td>
                             <td>{room.joined.length}/{room.capacity}</td>
                             <td>
@@ -80,10 +88,10 @@ export default function Join() {
 
         <div class='flex flex-1 mt-auto items-end gap-2'>
           <HomeButton />
-          <A href='' class={`btn btn-wide btn-success font-mono text-base ${(rooms()?.length || 0) > 0 ? '' : 'btn-disabled'}`}>
+          <button onClick={joinRandom} class={`btn btn-wide btn-success font-mono text-base ${(rooms()?.length || 0) > 0 ? '' : 'btn-disabled'}`}>
             <CgDice6 />
             Join a random match
-          </A>
+          </button>
         </div>
 
       </div>
