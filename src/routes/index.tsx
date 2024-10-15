@@ -3,35 +3,38 @@ import { IoPerson } from 'solid-icons/io'
 import Footer from '../components/Footer';
 import Logo from '../components/Logo';
 import { A, useNavigate } from '@solidjs/router';
-import { onMount } from 'solid-js';
-import { changeUsername, createUser, removeUser } from '~/backend/user';
-import { createRoom } from '~/backend/room';
-import { setUserId, setUsername, userId, username } from '~/data/types';
-
+import { socket } from '~/lib/socket';
+import { createEffect, createResource, createSignal, onMount } from 'solid-js';
+import { Room, User } from '~/types/core';
 
 function isEmptyString(s: string) {
   return s.trim() === ""
 }
 
+let userId: string;
+
 export default function Home() {
 
-  if (userId() !== -1) {
-    removeUser(userId());
-    setUserId(-1);
-  }
+  const [username, setUsername] = createSignal("");
 
-  onMount(async () => {
-    if (userId() === -1) {
-      setUserId(await createUser());
-    }
-    changeUsername(userId(), username());
+  onMount(() => {
+    userId = localStorage.getItem('userId') || "";
+    socket.emit("request-user", userId, (user: User) => {
+      userId = user.uuid
+      localStorage.setItem('userId', userId);
+      setUsername(user.name);
+    });
+  });
+
+  createEffect(() => {
+    socket.emit("change-username", userId, username());
   });
 
   const navigate = useNavigate();
-  async function goToRoom() {
-    await changeUsername(userId(), username());
-    let roomId = await createRoom(userId());
-    navigate(`room/${roomId}`);
+  function goToRoom() {
+    socket.emit("host-new-room", userId, (room: Room) => {
+      navigate(`room/${room.id}`);
+    });
   }
 
   return (
@@ -59,10 +62,9 @@ export default function Home() {
           </label>
           <div class='h-8'></div>
           <span class={`${isEmptyString(username()) ? "" : "hidden"} font-sans transition-all delay-200`}>Please enter your username first</span>
-
-          <A href='#' onClick={goToRoom} class={`btn ${isEmptyString(username()) ? "btn-disabled" : ""} btn-secondary text-base text-slate-800 mx-2 w-3/4`}>
+          <button onClick={goToRoom} class={`btn ${isEmptyString(username()) ? "btn-disabled" : ""} btn-secondary text-base text-slate-800 mx-2 w-3/4`}>
             Host a new match
-          </A>
+          </button>
 
           <A href='/join' class={`btn ${isEmptyString(username()) ? "btn-disabled" : ""} btn-secondary text-base text-slate-800 mx-2 w-3/4`}>
             Join an existing match

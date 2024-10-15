@@ -1,27 +1,30 @@
 import { CgDice6 } from 'solid-icons/cg'
 import Footer from "../components/Footer";
 import HomeButton from "../components/HomeButton";
-import { createSignal, For, Match, onMount, Switch } from 'solid-js';
+import { createSignal, For, Match, onMount, Show, Switch } from 'solid-js';
 import { A, useNavigate } from '@solidjs/router';
-import { getRooms, joinRoom } from '~/backend/room';
-import { Room, userId, username } from '~/data/types';
+import { Room } from '~/types/core';
 import { ImBlocked } from 'solid-icons/im';
 import { FaSolidArrowRightToBracket } from 'solid-icons/fa';
-import { changeUsername } from '~/backend/user';
+import { socket } from '~/lib/socket';
 
 export default function Join() {
   const navigate = useNavigate();
   const [rooms, setRooms] = createSignal<Room[]>();
-  async function refresh() {
-    setRooms(await getRooms());
-  }
 
-  async function enterRoom(roomId: number) {
-    await changeUsername(userId(), username());
+  socket.on("room-record-changed", (rooms: Room[]) => {
+    setRooms(rooms);
+  });
+
+  onMount(() => {
+    socket.emit("get-all-rooms", (rooms: Room[]) => {
+      setRooms(rooms);
+    });
+  });
+
+  function enterRoom(roomId: string) {
     navigate(`/room/${roomId}`);
   }
-
-  onMount(() => refresh());
 
   return (
     <div class='min-h-screen flex flex-col overflow-hidden'>
@@ -41,30 +44,35 @@ export default function Join() {
                 </tr>
               </thead>
               <tbody>
-                <For each={rooms()}>
-                  {(room) => {
-                    return (
-                    <tr>
-                      <th>{room.id}</th>
-                      <td>{room.host.name}</td>
-                      <td>{room.joined.size}/{room.capacity}</td>
-                      <td>
-                        <button onClick={() => enterRoom(room.id)} class={'font-mono text-base btn btn-sm btn-success' + (!room.vacant ? ' btn-disabled' : '')}>
-                          <Switch>
-                            <Match when={!room.vacant}>
-                              <ImBlocked />
-                              Full
-                            </Match>
-                            <Match when={room.vacant}>
-                              <FaSolidArrowRightToBracket />
-                              Join
-                            </Match>
-                          </Switch>
-                        </button>
-                      </td>
-                    </tr>);
-                    }}
-                </For>
+                <Show when={rooms()} keyed>
+                  {(rooms) => (
+                    <For each={rooms}>
+                      {(room) => {
+                        return (
+                          <tr>
+                            <th>{room.id}</th>
+                            <td>{room.host.name}</td>
+                            <td>{room.joined.length}/{room.capacity}</td>
+                            <td>
+                              <button onClick={() => enterRoom(room.id)} class={'font-mono text-base btn btn-sm btn-success' + (!room.vacant ? ' btn-disabled' : '')}>
+                                <Switch>
+                                  <Match when={!room.vacant}>
+                                    <ImBlocked />
+                                    Full
+                                  </Match>
+                                  <Match when={room.vacant}>
+                                    <FaSolidArrowRightToBracket />
+                                    Join
+                                  </Match>
+                                </Switch>
+                              </button>
+                            </td>
+                          </tr>);
+                      }}
+                    </For>
+                  )}
+                </Show>
+
               </tbody>
             </table>
           </div>
