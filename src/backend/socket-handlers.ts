@@ -108,12 +108,14 @@ export function handleEverything(io: sServer, socket: sSocket) {
     }
   });
 
-  socket.on("get-match-settings", (userId: string, callback: (settings: MatchSettings) => void) => {
+  socket.on("get-match-data", (userId: string, callback: (settings: Match) => void) => {
     let user = users[userId];
+    if (!user)
+      return;
     let roomId = user.roomId;
     if (roomId) {
       let match = matches[roomId];
-      callback(match.settings);
+      callback(match);
     }
   });
 
@@ -154,16 +156,13 @@ export function handleEverything(io: sServer, socket: sSocket) {
       let scoreA = match.scoreboard[handA.userId];
       let scoreB = match.scoreboard[handB.userId];
       let leader = Math.max(scoreA, scoreB);
-      if (leader < match.settings.round) {
-        match.rounds.push({
-          handA: { userId: "", hand: "waiting" },
-          handB: { userId: "", hand: "waiting" }
-        });
-        io.to(handA.userId).emit("round-done", resultA);
-        io.to(handB.userId).emit("round-done", resultB);
-      } else {
-        io.to(handA.userId).emit("round-done", resultA);
-        io.to(handB.userId).emit("round-done", resultB);
+      match.rounds.push({
+        handA: { userId: "", hand: "waiting" },
+        handB: { userId: "", hand: "waiting" }
+      });
+      io.to(handA.userId).emit("round-done", resultA);
+      io.to(handB.userId).emit("round-done", resultB);
+      if (leader >= match.settings.round) {
         let winner = (scoreA > scoreB) ? handA.userId : handB.userId;
         io.to(handA.userId).emit("match-ended", winner);
         io.to(handB.userId).emit("match-ended", winner);

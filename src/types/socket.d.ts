@@ -6,7 +6,7 @@ import type {
   Socket as SocketforServer,
 } from "socket.io";
 import type { Socket as SocketforClient } from "socket.io-client";
-import { Hand, MatchSettings, Room, RoomJoinResult, RoundResult, User } from "./core";
+import { Hand, Match, MatchSettings, Room, RoomJoinResult, RoundResult, User } from "./core";
 
 interface SocketServer extends HTTPServer {
   io?: IOServer;
@@ -44,7 +44,7 @@ export interface ClientToServerEvents {
 
   "start-match": (roomId: string, settings: MatchSettings) => void;
   "enter-match": (userId: string) => void;
-  "get-match-settings": (userId: string, callback: (settings: MatchSettings) => void) => void;
+  "get-match-data": (userId: string, callback: (match: Match) => void) => void;
   "abort-match": (roomId: string) => void;
   "play-hand": (uuid: string, hand: Hand) => void;
   "send-captured-image": (uuid: string, image: string) => void;
