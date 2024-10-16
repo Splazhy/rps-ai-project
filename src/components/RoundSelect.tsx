@@ -1,13 +1,32 @@
-import { createEffect, createSignal } from "solid-js";
+import { createEffect, createSignal, Setter } from "solid-js";
 
-export default function RoundSelect() {
+export default function RoundSelect(props: {
+  roundChanged: Setter<number>
+}) {
   const [selectedRadio, setSelectedRadio] = createSignal(3);
   const [numberValue, setNumberValue] = createSignal("");
+  const [round, setRound] = createSignal(2);
 
   const changeRadio = (num: number) => {
     setSelectedRadio(num);
     setNumberValue("");
   }
+
+  createEffect(() => {
+    if (selectedRadio() !== -1) {
+      setRound(Math.floor(selectedRadio() / 2) + 1);
+    }
+  });
+
+  createEffect(() => {
+    if (numberValue()) {
+      setRound(+numberValue());
+    }
+  });
+
+  createEffect(() => {
+    props.roundChanged(round());
+  });
 
   createEffect(() => {
     if (numberValue() !== '') {

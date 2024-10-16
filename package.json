@@ -7,6 +7,7 @@
     "start": "vinxi start"
   },
   "dependencies": {
+    "@gradio/client": "^1.6.0",
     "@solid-primitives/storage": "^4.2.1",
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.14.7",

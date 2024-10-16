@@ -1,16 +1,25 @@
-import { IoCamera } from 'solid-icons/io';
-import { createSignal, Match, Switch } from 'solid-js';
+import { IoCamera } from 'solid-icons/io'
+import { createEffect, createSignal, Match, Setter, Switch } from 'solid-js';
 import CameraFeed from './CameraFeed';
 
-export default function CameraPlaceholder() {
+export default function CameraPlaceholder(props: {
+  enabledChanged?: Setter<boolean>
+}) {
+
+  const [disabled, setDisable] = createSignal(false);
   let [cameraIsOn, setCameraOn] = createSignal(false);
+  createEffect(() => {
+    if (props.enabledChanged) {
+      props.enabledChanged(cameraIsOn());
+    }
+  })
 
   return (
     <>
       <div class='flex items-center justify-center border-slate-800 border-8 md:w-[480px] w-[80vw] bg-slate-500 rounded-3xl'>
         <Switch>
           <Match when={cameraIsOn()}>
-            <CameraFeed />
+            <CameraFeed setDisable={disabled} />
           </Match>
           <Match when={!cameraIsOn()}>
             <button class='md:text-[12rem] text-[30vw] text-slate-800 text-center'>

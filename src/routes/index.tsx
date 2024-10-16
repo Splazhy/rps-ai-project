@@ -17,10 +17,10 @@ export default function Home() {
   const [username, setUsername] = createSignal("");
 
   onMount(() => {
-    userId = localStorage.getItem('userId') || "";
+    userId = sessionStorage.getItem('userId') || "";
     socket.emit("request-user", userId, (user: User) => {
-      userId = user.uuid;
-      localStorage.setItem('userId', userId);
+      userId = user.uuid
+      sessionStorage.setItem('userId', userId);
       setUsername(user.name);
     });
   });
