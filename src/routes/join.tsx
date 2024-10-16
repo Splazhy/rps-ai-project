@@ -1,4 +1,4 @@
-import { CgDice6 } from 'solid-icons/cg';
+import { CgDice6 } from 'solid-icons/cg'
 import Footer from "../components/Footer";
 import HomeButton from "../components/HomeButton";
 import { createEffect, createSignal, For, Match, onMount, Show, Switch } from 'solid-js';
@@ -44,20 +44,20 @@ export default function Join() {
   }
 
   return (
-    <div class='min-h-screen flex flex-col overflow-hidden p-4 md:p-8'>
+    <div class='min-h-screen flex flex-col overflow-hidden'>
 
-      <div class="flex flex-col mt-8 items-center gap-6">
+      <div class="flex flex-col mt-8 items-center gap-8">
 
-        <div class='w-full'>
+        <div>
           <h1 class='text-center text-2xl font-mono'>Available Hosts</h1>
-          <div class='overflow-x-auto'>
-            <table class="table-auto w-full max-h-[70vh] overflow-scroll">
+          <div class='w-fit max-h-[70vh] overflow-scroll'>
+            <table class="table table-zebra">
               <thead>
                 <tr>
-                  <th class="px-2 py-1">No.</th>
-                  <th class="px-2 py-1">Host name</th>
-                  <th class="px-2 py-1">Size</th>
-                  <th class="px-2 py-1">Join</th>
+                  <th>No.</th>
+                  <th>Host name</th>
+                  <th>Size</th>
+                  <th>Join</th>
                 </tr>
               </thead>
               <tbody>
@@ -67,25 +67,24 @@ export default function Join() {
                       {(room, i) => {
                         return (
                           <tr>
-                            <td class="px-2 py-1">{i() + 1}</td>
-                            <td class="px-2 py-1">{room.host.name}</td>
-                            <td class="px-2 py-1">{room.joined.length}/{room.capacity}</td>
-                            <td class="px-2 py-1">
-                              <button onClick={() => enterRoom(room.id)} class={`font-mono text-base btn btn-sm btn-success ${!room.vacant ? 'btn-disabled' : ''}`}>
+                            <th>{i() + 1}</th>
+                            <td>{room.host.name}</td>
+                            <td>{room.joined.length}/{room.capacity}</td>
+                            <td>
+                              <button onClick={() => enterRoom(room.id)} class={'font-mono text-base btn btn-sm btn-success' + (!room.vacant ? ' btn-disabled' : '')}>
                                 <Switch>
                                   <Match when={!room.vacant}>
-                                    <ImBlocked class="inline mr-1" />
+                                    <ImBlocked />
                                     Full
                                   </Match>
                                   <Match when={room.vacant}>
-                                    <FaSolidArrowRightToBracket class="inline mr-1" />
+                                    <FaSolidArrowRightToBracket />
                                     Join
                                   </Match>
                                 </Switch>
                               </button>
                             </td>
-                          </tr>
-                        );
+                          </tr>);
                       }}
                     </For>
                   )}
@@ -96,10 +95,10 @@ export default function Join() {
           </div>
         </div>
 
-        <div class='flex flex-col md:flex-row mt-auto items-end gap-2'>
+        <div class='flex flex-1 mt-auto items-end gap-2'>
           <HomeButton />
-          <button onClick={joinRandom} class={`btn btn-wide btn-success font-mono text-base ${rooms()?.length ? '' : 'btn-disabled'}`}>
-            <CgDice6 class="inline mr-1" />
+          <button onClick={joinRandom} class={`btn btn-wide btn-success font-mono text-base ${canJoinAny() ? '' : 'btn-disabled'}`}>
+            <CgDice6 />
             Join a random match
           </button>
         </div>
