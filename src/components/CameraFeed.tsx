@@ -21,7 +21,12 @@ export default function CameraFeed(props: {
   //       so this can only be test on localhost and https.
   onMount(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 720 },
+          height: { ideal: 720 }
+        }
+      });
       setVideoStream(stream);
       if (videoRef) {
         videoRef.srcObject = stream;
@@ -54,10 +59,14 @@ export default function CameraFeed(props: {
   };
 
   return (
-    <div class='text-center'>
-      <video ref={videoRef} autoplay playsinline></video>
-      <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
-      <button onClick={captureImage} class={`btn btn-primary ${(props.setDisable()) ? 'btn-disabled' : ''}`}>Capture</button>
+    <div>
+      <div class='text-center flex items-center justify-center border-slate-800 border-8 md:size-[480px] size-[80vw] bg-slate-500 rounded-3xl'>
+        <video class="rounded-2xl" ref={videoRef} autoplay playsinline></video>
+        <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
+      </div>
+      <div class='text-center mt-2'>
+        <button onClick={captureImage} class={`btn btn-primary ${(props.setDisable()) ? 'btn-disabled' : ''}`}>Capture</button>
+      </div>
     </div>
   );
 }

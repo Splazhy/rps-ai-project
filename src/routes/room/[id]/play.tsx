@@ -149,13 +149,13 @@ export default function PlayHuman() {
         </span>
       </Show>
       <Show when={useCamera()}>
-        <div class='flex items-center justify-center border-slate-800 border-8 md:size-[480px] size-[80vw] bg-slate-500 rounded-3xl'>
+        <div class="flex gap-8">
           <CameraFeed setDisable={hasPlayed} captureImage={setCaptureDataURL} />
-        </div>
-        <div class='flex items-center justify-center border-slate-800 border-8 md:size-[480px] size-[80vw] bg-slate-500 rounded-3xl'>
-          <Show when={roundHasEnded()}>
-            <img src={opponentImageURL()}></img>
-          </Show>
+          <div class='flex items-center justify-center border-slate-800 border-8 md:size-[480px] size-[80vw] bg-slate-500 rounded-3xl'>
+            <Show when={roundHasEnded()}>
+              <img src={opponentImageURL()}></img>
+            </Show>
+          </div>
         </div>
       </Show>
       <Footer />

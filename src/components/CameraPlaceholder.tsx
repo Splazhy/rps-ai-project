@@ -17,18 +17,18 @@ export default function CameraPlaceholder(props: {
 
   return (
     <>
-      <div class='flex items-center justify-center border-slate-800 border-8 md:size-[480px] size-[80vw] bg-slate-500 rounded-3xl'>
-        <Switch>
-          <Match when={cameraIsOn()}>
-            <CameraFeed setDisable={disabled} />
-          </Match>
-          <Match when={!cameraIsOn()}>
-            <button class='md:text-[12rem] text-[30vw] text-slate-800 text-center'>
+      <Switch>
+        <Match when={cameraIsOn()}>
+          <CameraFeed setDisable={disabled} />
+        </Match>
+        <Match when={!cameraIsOn()}>
+          <div class='flex items-center justify-center border-slate-800 border-8 md:size-[480px] size-[80vw] bg-slate-500 rounded-3xl'>
+            <div class='md:text-[12rem] text-[30vw] text-slate-800 text-center'>
               <IoCamera />
-            </button>
-          </Match>
-        </Switch>
-      </div>
+            </div>
+          </div>
+        </Match>
+      </Switch>
       <input type="checkbox" class="toggle"
         checked={cameraIsOn()}
         onChange={(e) => setCameraOn(e.currentTarget.checked)}

@@ -42,6 +42,8 @@ export default function Home() {
 
       <Logo />
 
+      <A href='/info' class='btn text-base px-8'>How to play</A>
+
       <div class='md:flex md:flex-row flex-col flex-wrap w-full my-12 justify-center items-center'>
 
         <div class='flex-1 flex self-start justify-center items-center flex-col gap-2'>
