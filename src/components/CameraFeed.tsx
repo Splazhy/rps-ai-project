@@ -1,8 +1,9 @@
-import { createEffect, onCleanup, onMount, Setter } from 'solid-js';
+import { Accessor, createEffect, onCleanup, onMount, Setter } from 'solid-js';
 import { createSignal } from 'solid-js';
 
 
 export default function CameraFeed(props: {
+  setDisable: Accessor<boolean>
   captureImage?: Setter<string | undefined>
 }) {
   const [videoStream, setVideoStream] = createSignal<MediaStream | null>(null);
@@ -53,10 +54,10 @@ export default function CameraFeed(props: {
   };
 
   return (
-    <div>
+    <div class='text-center'>
       <video ref={videoRef} autoplay playsinline></video>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
-      <button onClick={captureImage} class='btn btn-primary'>Capture</button>
+      <button onClick={captureImage} class={`btn btn-primary ${(props.setDisable()) ? 'btn-disabled' : ''}`}>Capture</button>
     </div>
   );
 }
