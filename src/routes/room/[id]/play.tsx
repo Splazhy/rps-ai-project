@@ -22,7 +22,7 @@ export default function PlayHuman() {
   const [hasPlayed, setHasPlayed] = createSignal(false);
   const [roundHasEnded, setRoundHasEnded] = createSignal(false);
   const [matchHasEnded, setMatchHasEnded] = createSignal(false);
-  const [won, setWon] = createSignal(true);
+  const [won, setWon] = createSignal(true); // default to everyone wins, why not?
   const [capture, setCaptureDataURL] = createSignal<string>();
   const [opponentImageURL, setOpponentImageURL] = createSignal<string>();
 
@@ -149,7 +149,7 @@ export default function PlayHuman() {
         </span>
       </Show>
       <Show when={useCamera()}>
-        <div class="flex gap-8">
+        <div class="flex flex-col md:flex-row gap 4 md:gap-8">
           <CameraFeed setDisable={hasPlayed} captureImage={setCaptureDataURL} />
           <div class='flex items-center justify-center border-slate-800 border-8 md:size-[480px] size-[80vw] bg-slate-500 rounded-3xl'>
             <Show when={roundHasEnded()}>
