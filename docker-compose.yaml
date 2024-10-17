@@ -1,0 +1,9 @@
+services:
+  server:
+    image: ghcr.io/splazhy/rps-ai-project:main
+    environment:
+      GRADIO_SERVER: http://localhost:7860
+      # GRADIO_USERNAME: username # only if gradio backend requires auth
+      # GRADIO_PASSWORD: passwordpassword
+    ports:
+      - 3000:3000

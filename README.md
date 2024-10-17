@@ -1,20 +1,8 @@
-# SolidStart
-
-Everything you need to build a Solid project, powered by [`solid-start`](https://start.solidjs.com);
-
-## Creating a project
-
-```bash
-# create a new project in the current directory
-npm init solid@latest
-
-# create a new project in my-app
-npm init solid@latest my-app
-```
-
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+install dependencies with `npm install` (or `pnpm install` or `yarn`)
+
+then start a development server:
 
 ```bash
 npm run dev
@@ -25,8 +13,26 @@ npm run dev -- --open
 
 ## Building
 
-Solid apps are built with _presets_, which optimise your project for deployment to different environments.
+### Docker
 
-By default, `npm run build` will generate a Node app that you can run with `npm start`. To use a different preset, add it to the `devDependencies` in `package.json` and specify in your `app.config.js`.
+run `docker build .`
 
-## This project was created with the [Solid CLI](https://solid-cli.netlify.app)
+### Manually
+
+run `npm run build`
+
+## Running
+
+make sure the [gradio backend](https://github.com/NutchapolSal/aiproject#publicimagemining) is running
+
+### Docker Compose
+
+copy `docker-compose.yaml` into an empty directory, edit environment variables, then `docker compose up`
+
+### Manually
+
+set environment variables (refer to `docker-compose.yaml`), then run `node .output/server/index.mjs`
+
+only files and folder in the `.output` folder are needed, the rest of the repo is not needed for running after build
+
+<sup>node versions older than 22 may work, we did not check</sup>
