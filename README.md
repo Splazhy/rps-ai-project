@@ -15,6 +15,8 @@ npm run dev -- --open
 
 ### Docker
 
+usually not required, as docker image builds for `ghcr.io/splazhy/rps-ai-project` are automated with a workflow
+
 run `docker build .`
 
 ### Manually
